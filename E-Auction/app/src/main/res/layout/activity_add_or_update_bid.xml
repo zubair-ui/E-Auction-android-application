@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/sky"
+        tools:context=".AddBidActivity">
+
+        <ImageView
+            android:id="@+id/img_item"
+            android:layout_width="214dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="84dp"
+            android:layout_marginTop="52dp"
+            android:layout_marginBottom="316dp"
+            android:background="@color/teal_200"
+            app:layout_constraintBottom_toTopOf="@+id/btn_submit"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/baseline_add_24" />
+
+        <EditText
+            android:id="@+id/et_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="9dp"
+            android:ems="10"
+            android:hint="@string/title"
+            android:inputType="text"
+            app:layout_constraintEnd_toEndOf="@+id/img_item"
+            app:layout_constraintTop_toBottomOf="@+id/img_item" />
+
+        <EditText
+            android:id="@+id/et_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="9dp"
+            android:ems="10"
+            android:hint="@string/description"
+            android:inputType="text"
+            app:layout_constraintBottom_toTopOf="@+id/et_starting_bid"
+            app:layout_constraintStart_toStartOf="@+id/et_title"
+            app:layout_constraintTop_toBottomOf="@+id/et_title" />
+
+        <EditText
+            android:id="@+id/et_starting_bid"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:ems="10"
+            android:hint="@string/starting_bid"
+            android:inputType="number"
+            app:layout_constraintBottom_toTopOf="@+id/et_start_date"
+            app:layout_constraintStart_toStartOf="@+id/et_description"
+            app:layout_constraintTop_toBottomOf="@+id/et_description" />
+
+        <EditText
+            android:id="@+id/et_start_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:inputType="text"
+            android:ems="10"
+            android:hint="@string/select_start_date"
+            app:layout_constraintBottom_toTopOf="@+id/et_end_date"
+            app:layout_constraintStart_toStartOf="@+id/et_starting_bid"
+            app:layout_constraintTop_toBottomOf="@+id/et_starting_bid" />
+
+        <EditText
+            android:id="@+id/et_end_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="26dp"
+            android:inputType="text"
+            android:ems="10"
+            android:hint="@string/select_end_date"
+            app:layout_constraintBottom_toTopOf="@+id/btn_submit"
+            app:layout_constraintStart_toStartOf="@+id/et_start_date"
+            app:layout_constraintTop_toBottomOf="@+id/et_start_date" />
+
+        <Button
+            android:id="@+id/btn_submit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="49dp"
+            android:text="@string/submit"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/img_item" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

@@ -1,0 +1,33 @@
+<resources>
+    <string name="app_name">E-Auction</string>
+    <string name="log_in">Log In</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="submit">Submit</string>
+    <string name="create_account">Create Account</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="name">Name</string>
+    <string-array name="spinner_items">
+        <item>Current Bids</item>
+        <item>Previous Bids</item>
+        <item>Future Bids</item>
+    </string-array>
+    <string name="default_spinner_item">Current Bids</string>
+    <string name="title">Title</string>
+    <string name="description">Description</string>
+    <string name="starting_bid">Starting Bid</string>
+    <string name="select_start_date">Start Date: e.g 2024–02–26</string>
+    <string name="select_end_date">End date: e.g 2024–03–25</string>
+    <string name="start_date_item">Start Date: </string>
+    <string name="end_date_item">End Date: </string>
+    <string name="starting_bid_item">Starting Bid: </string>
+    <string name="highest_bid_item">Highest Bid: </string>
+    <string name="highest_bidder">Highest Bidder: </string>
+    <string name="your_bid_item">Your Bid: </string>
+    <string name="hint_user_bid">e.g.500</string>
+    <string name="bid_item">Bid</string>
+    <string name="show_password">Show Password</string>
+    <string name="no_bids_are_available">No Bids Are Available</string>
+    <string name="e_auction">E-Auction</string>
+    <string name="you_need_it_we_have_it">You need it,We have it</string>
+</resources>
