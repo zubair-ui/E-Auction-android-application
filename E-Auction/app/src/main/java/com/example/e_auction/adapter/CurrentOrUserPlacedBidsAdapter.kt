@@ -60,24 +60,31 @@ class CurrentOrUserPlacedBidsAdapter(var activity: Activity, var context: Contex
         holder.submitButton.setOnClickListener {
             val userBidInt = holder.userBid.text.toString().toInt()
             val highestBidInt = holder.highestBid.text.toString().toInt()
-            if(userBidInt<highestBidInt){
-                context.showToast("Please Enter valid value")
+            val startingBidInt = holder.startingBid.text.toString().toInt()
+
+            if(startingBidInt<=userBidInt){
+                if(userBidInt<highestBidInt){
+                    context.showToast("Please Enter valid value")
+                }
+                else{
+                    progressDialog.setMessage("Please wait...")
+                    progressDialog.setCancelable(false)
+                    updatedBid = bid
+                    updatedPosition = position
+                    val request = Request(
+                        action = Constant.UPDATE_HIGHEST_BIDDER,
+                        userEmail = DataProvider.userEmail,
+                        bidId = bid.bidId,
+                        highestBid = userBidInt.toString()
+                    )
+                    progressDialog.show()
+                    val callResponse = requestContract.makeApiCall(request)
+                    callResponse.enqueue(this)
+                    holder.bind(bid)
+                }
             }
             else{
-                progressDialog.setMessage("Please wait...")
-                progressDialog.setCancelable(false)
-                updatedBid = bid
-                updatedPosition = position
-                val request = Request(
-                    action = Constant.UPDATE_HIGHEST_BIDDER,
-                    userEmail = DataProvider.userEmail,
-                    bidId = bid.bidId,
-                    highestBid = userBidInt.toString()
-                )
-                progressDialog.show()
-                val callResponse = requestContract.makeApiCall(request)
-                callResponse.enqueue(this)
-                holder.bind(bid)
+                context.showToast("Please Enter valid value")
             }
         }
 
