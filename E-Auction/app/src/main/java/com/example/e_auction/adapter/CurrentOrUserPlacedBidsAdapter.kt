@@ -139,6 +139,7 @@ class CurrentOrUserPlacedBidsAdapter(var activity: Activity, var context: Contex
                 context.showToast(serverResponse.message)
                 val intent = Intent(context, PlacedBidsActivity::class.java)
                 context.startActivity(intent)
+                activity.finish()
             } else {
                 context.showToast(serverResponse.message)
             }
