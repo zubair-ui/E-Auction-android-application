@@ -4,7 +4,6 @@ import android.Manifest
 import android.app.DatePickerDialog
 import android.app.ProgressDialog
 import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
@@ -17,7 +16,6 @@ import android.util.Base64
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
@@ -67,22 +65,55 @@ class AddOrUpdateBidActivity : AppCompatActivity(), Callback<Response> {
         binding.btnSubmit.setOnClickListener {
             val title = binding.etTitle.text.toString().trim()
             val description = binding.etDescription.text.toString().trim()
-            val image = bitmapToBase64((binding.imgItem.drawable as BitmapDrawable).bitmap)
             val startDate = binding.etStartDate.text.toString().trim()
             val endDate = binding.etEndDate.text.toString().trim()
             val startingBid = binding.etStartingBid.text.toString().trim()
+            try{
+                val image = bitmapToBase64((binding.imgItem.drawable as BitmapDrawable).bitmap)
+                if (title.isNotEmpty() && description.isNotEmpty() && startDate.isNotEmpty() && endDate.isNotEmpty()
+                    && startingBid.isNotEmpty() && convertToComparableDate(startDate) < convertToComparableDate(endDate)) {
+                    var request = Request()
+                    if (reason == 2) {
+                        val startBidInt = startingBid.toInt()
+                        val highestBidInt = DataProvider.bid.highestBid.toInt()
+                        if (startBidInt <= highestBidInt && highestBidInt!=0) {
+                            request = Request(
+                                action = Constant.UPDATE_BID_ITEM,
+                                userEmail = email,
+                                bidId = editedBid.bidId,
+                                title = title,
+                                description = description,
+                                image = image,
+                                startDate = startDate,
+                                endDate = endDate,
+                                startingBid = startingBid
+                            )
+                            progressDialog.show()
+                            val callResponse = requestContract.makeApiCall(request)
+                            callResponse.enqueue(this)
+                        }else if (highestBidInt==0) {
+                            request = Request(
+                                action = Constant.UPDATE_BID_ITEM,
+                                userEmail = email,
+                                bidId = editedBid.bidId,
+                                title = title,
+                                description = description,
+                                image = image,
+                                startDate = startDate,
+                                endDate = endDate,
+                                startingBid = startingBid
+                            )
+                            progressDialog.show()
+                            val callResponse = requestContract.makeApiCall(request)
+                            callResponse.enqueue(this)
+                        }else {
+                            showToast("Starting bid should be less than $highestBidInt")
+                        }
 
-            if (title.isNotEmpty() && description.isNotEmpty() && startDate.isNotEmpty() && endDate.isNotEmpty()
-                && startingBid.isNotEmpty() && convertToComparableDate(startDate) < convertToComparableDate(endDate)) {
-                var request = Request()
-                if (reason == 2) {
-                    val startBidInt = startingBid.toInt()
-                    val highestBidInt = DataProvider.bid.highestBid.toInt()
-                    if (startBidInt <= highestBidInt) {
+                    } else {
                         request = Request(
-                            action = Constant.UPDATE_BID_ITEM,
+                            action = Constant.ADD_BID_ITEM,
                             userEmail = email,
-                            bidId = editedBid.bidId,
                             title = title,
                             description = description,
                             image = image,
@@ -93,28 +124,13 @@ class AddOrUpdateBidActivity : AppCompatActivity(), Callback<Response> {
                         progressDialog.show()
                         val callResponse = requestContract.makeApiCall(request)
                         callResponse.enqueue(this)
-                    } else {
-                        showToast("Starting bid should be less than $highestBidInt")
                     }
 
                 } else {
-                    request = Request(
-                        action = Constant.ADD_BID_ITEM,
-                        userEmail = email,
-                        title = title,
-                        description = description,
-                        image = image,
-                        startDate = startDate,
-                        endDate = endDate,
-                        startingBid = startingBid
-                    )
-                    progressDialog.show()
-                    val callResponse = requestContract.makeApiCall(request)
-                    callResponse.enqueue(this)
+                    showToast("Please enter correct bid details")
                 }
-
-            } else {
-                showToast("Please enter correct bid details")
+            }catch (_: Exception){
+                showToast("Image cannot be empty")
             }
         }
 
@@ -140,21 +156,9 @@ class AddOrUpdateBidActivity : AppCompatActivity(), Callback<Response> {
                 }
             }
 
-        // Initialize the gallery launcher
-        startGalleryLauncher =
-            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-                if (result.resultCode == RESULT_OK) {
-                    val imageUri = result.data?.data
-                    photo = MediaStore.Images.Media.getBitmap(contentResolver, imageUri)
-                    binding.imgItem.setImageBitmap(photo)
-                    // Handle the selected photo
-                } else {
-                    // Gallery activity canceled or failed
-                }
-            }
 
         binding.imgItem.setOnClickListener {
-            showImageSourceDialog()
+            checkCameraPermission()
         }
 
         binding.etStartDate.setOnClickListener {
@@ -165,19 +169,6 @@ class AddOrUpdateBidActivity : AppCompatActivity(), Callback<Response> {
         }
     }
 
-    private fun showImageSourceDialog() {
-        val options = arrayOf<CharSequence>("Take Photo", "Choose from Gallery", "Cancel")
-        val builder: AlertDialog.Builder = AlertDialog.Builder(this)
-        builder.setTitle("Select Option")
-        builder.setItems(options) { dialog, item ->
-            when (options[item]) {
-                "Take Photo" -> checkCameraPermission()
-                "Choose from Gallery" -> openGallery()
-                "Cancel" -> dialog.dismiss()
-            }
-        }
-        builder.show()
-    }
 
     private fun checkCameraPermission() {
         if (ContextCompat.checkSelfPermission(
@@ -198,16 +189,6 @@ class AddOrUpdateBidActivity : AppCompatActivity(), Callback<Response> {
     private fun openCamera() {
         val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         startCameraLauncher?.launch(cameraIntent)
-    }
-
-    private fun openGallery() {
-        val galleryIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-        startGalleryLauncher?.launch(galleryIntent)
-    }
-
-    companion object {
-        private const val MY_CAMERA_PERMISSION_CODE = 100
-        private val CAMERA_PERMISSIONS = arrayOf(Manifest.permission.CAMERA)
     }
 
     private fun showDatePickerDialog(startOrEnd: String) {
